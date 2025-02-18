@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,10 +20,16 @@ import java.util.Objects;
 
 public class RockBoxTagger extends Application {
 
+    // TODO: 2025-02-18 create listview for the folders imported
+    
     private static Stage stage;
     private static Scene mainScene;
-    private static Scene imageScene;
+    private static Scene masterReleaseChooser;
+    private static Scene trackListChooser;
     private TextField pathField;
+
+    private static final ListView<String> trackLists = new ListView<>();
+    private static Label count;
 
     private static ImageView topLeftIV;
     private static ImageView topRightIV;
@@ -37,11 +44,51 @@ public class RockBoxTagger extends Application {
     public void start(Stage s) {
         stage = s;
         createMainScene();
-        createImageScene();
+        createMasterReleaseScene();
+        createTrackListScene();
 
         stage.setTitle("Rockbox Tagger");
         stage.setScene(mainScene);
         stage.show();
+    }
+
+    private void createTrackListScene() {
+        GridPane root = new GridPane();
+        root.setPadding(new Insets(10));
+        root.setVgap(10);
+        root.setHgap(10);
+
+
+        count = new Label();
+        Button next = new Button("Next");
+        Button previous = new Button("Previous");
+        Button commit = new Button("Commit tracklist");
+
+        next.setOnAction(event -> {
+            trackLists.setItems(TrackListChooser.getNextTrackList());
+            count.setText(TrackListChooser.getCount());
+        });
+
+        previous.setOnAction(event -> {
+            trackLists.setItems(TrackListChooser.getPreviousTrackList());
+            count.setText(TrackListChooser.getCount());
+        });
+
+        commit.setOnAction(event -> {
+            if (!TrackListChooser.commitTrackList())
+                stage.setScene(mainScene);
+        });
+
+        GridPane.setConstraints(count, 1, 0, 1, 1);
+        GridPane.setConstraints(next, 2, 0, 1, 1);
+        GridPane.setConstraints(previous, 0, 0, 1, 1);
+        GridPane.setConstraints(commit, 3, 0, 1, 1);
+        GridPane.setConstraints(trackLists, 0, 1, 4, 1);
+
+        root.setAlignment(Pos.CENTER);
+        root.getChildren().addAll(next, commit, trackLists, count, previous);
+
+        trackListChooser = new Scene(root, 600 , 800);
     }
 
     private void createMainScene() {
@@ -66,7 +113,7 @@ public class RockBoxTagger extends Application {
         mainScene = new Scene(root, 400, 200);
     }
 
-    private void createImageScene() {
+    private void createMasterReleaseScene() {
         GridPane imageGrid = new GridPane();
         imageGrid.setPadding(new Insets(10));
         imageGrid.setHgap(10);
@@ -144,7 +191,7 @@ public class RockBoxTagger extends Application {
         imageGrid.add(imageBox2, 0, 1);
         imageGrid.add(imageBox3, 1, 1);
 
-        imageScene = new Scene(imageGrid, 400, 400);
+        masterReleaseChooser = new Scene(imageGrid, 400, 400);
     }
 
     private static void commit(MouseEvent event) {
@@ -152,24 +199,28 @@ public class RockBoxTagger extends Application {
             var id = ((ImageView) event.getSource()).getId();
 
             if (Objects.equals(id, "0"))
-                Driver.commit(0);
+                MasterReleaseChooser.commit(0);
             if (Objects.equals(id, "1"))
-                Driver.commit(1);
+                MasterReleaseChooser.commit(1);
             if (Objects.equals(id, "2"))
-                Driver.commit(2);
+                MasterReleaseChooser.commit(2);
             if (Objects.equals(id, "3"))
-                Driver.commit(3);
+                MasterReleaseChooser.commit(3);
 
-            if (Driver.isFinished())
-                stage.setScene(mainScene);
+            if (MasterReleaseChooser.isFinished()){
+                TrackListChooser.init(MasterReleaseChooser.getCommittedMasterReleases());
+                trackLists.setItems(TrackListChooser.getNextTrackList());
+                count.setText(TrackListChooser.getCount());
+                stage.setScene(trackListChooser);
+            }
         }
     }
 
     private void checkFolderForAlbums() {
         String folderPath = pathField.getText();
         if (folderPath != null && !folderPath.trim().isEmpty()) {
-            if (Driver.init(folderPath.trim()))
-                stage.setScene(imageScene);
+            if (MasterReleaseChooser.init(folderPath.trim()))
+                stage.setScene(masterReleaseChooser);
             setImages();
         }
     }
@@ -180,27 +231,27 @@ public class RockBoxTagger extends Application {
             var id = ((Button) source).getId();
 
             if (Objects.equals(id, "0"))
-                Driver.reRoll(0);
+                MasterReleaseChooser.reRoll(0);
             if (Objects.equals(id, "1"))
-                Driver.reRoll(1);
+                MasterReleaseChooser.reRoll(1);
             if (Objects.equals(id, "2"))
-                Driver.reRoll(2);
+                MasterReleaseChooser.reRoll(2);
             if (Objects.equals(id, "3"))
-                Driver.reRoll(3);
+                MasterReleaseChooser.reRoll(3);
             setImages();
         }
     }
 
     private static void setImages(){
-        topLeftIV.setImage(Driver.getImageFor(0));
-        topRightIV.setImage(Driver.getImageFor(1));
-        bottomLeftIV.setImage(Driver.getImageFor(2));
-        bottomRightIV.setImage(Driver.getImageFor(3));
+        topLeftIV.setImage(MasterReleaseChooser.getImageFor(0));
+        topRightIV.setImage(MasterReleaseChooser.getImageFor(1));
+        bottomLeftIV.setImage(MasterReleaseChooser.getImageFor(2));
+        bottomRightIV.setImage(MasterReleaseChooser.getImageFor(3));
 
-        topLeftLabel.setText(Driver.getTitleFor(0));
-        topRightLabel.setText(Driver.getTitleFor(1));
-        bottomLeftLabel.setText(Driver.getTitleFor(2));
-        bottomRightLabel.setText(Driver.getTitleFor(3));
+        topLeftLabel.setText(MasterReleaseChooser.getTitleFor(0));
+        topRightLabel.setText(MasterReleaseChooser.getTitleFor(1));
+        bottomLeftLabel.setText(MasterReleaseChooser.getTitleFor(2));
+        bottomRightLabel.setText(MasterReleaseChooser.getTitleFor(3));
     }
 
     public static void main(String[] args) {
