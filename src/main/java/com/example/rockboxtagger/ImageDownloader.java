@@ -10,8 +10,14 @@ import java.util.Collections;
 
 public abstract class ImageDownloader {
     private final static String COVER_ART_PATH = ".\\CoverArt\\";
+    private final static String COMMIT_PATH = "Committed\\";
     private final static String ENDING = ".jpg";
-    public static void downloadImage(String imageUrl, String fileName){
+
+    public static void downloadImage(String imageUrl, String fileName) {
+        File f = new File(buildPath(fileName));
+        if (f.isFile())
+            return;
+
         URL url = null;
         try {
             url = new URL(imageUrl);
@@ -19,8 +25,7 @@ public abstract class ImageDownloader {
             System.err.println("Could not open " + imageUrl + ": " + e.getMessage());
             return;
         }
-        try (InputStream inputStream = url.openStream();
-             FileOutputStream outputStream = new FileOutputStream(buildPath(fileName))) {
+        try (InputStream inputStream = url.openStream(); FileOutputStream outputStream = new FileOutputStream(buildPath(fileName))) {
 
             byte[] buffer = new byte[4096];
             int bytesRead;
@@ -33,11 +38,11 @@ public abstract class ImageDownloader {
         }
     }
 
-    public static boolean removeFile(String filename){
+    public static boolean removeFile(String filename) {
 
         File fileToDelete = new File(buildPath(filename));
 
-        if (!fileToDelete.isFile()){
+        if (!fileToDelete.isFile()) {
             System.err.println(fileToDelete + " is not a file");
             return false;
         }
@@ -45,7 +50,28 @@ public abstract class ImageDownloader {
         return fileToDelete.delete();
     }
 
-    public static String buildPath(String s){
+    public static String buildPath(String s) {
         return COVER_ART_PATH + s + ENDING;
+    }
+
+    public static String buildCommitPath(String s) {
+        return COVER_ART_PATH + COMMIT_PATH + s + ENDING;
+    }
+
+    public static void commitFile(String fileName) {
+        File fileToMove = new File(buildPath(fileName));
+        File filePathToMoveTo = new File(buildCommitPath(fileName));
+
+        if (filePathToMoveTo.isFile()){
+            removeFile(fileName);
+            System.out.println("File already existed in : " + buildCommitPath(fileName));
+            return;
+        }
+
+        if (!fileToMove.renameTo(filePathToMoveTo)) {
+            System.err.println("Could not move file to: " + buildCommitPath(fileName));
+            return;
+        }
+        System.out.println("Committed file: " + buildCommitPath(fileName));
     }
 }
