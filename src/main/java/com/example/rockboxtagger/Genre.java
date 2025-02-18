@@ -1,0 +1,25 @@
+package com.example.rockboxtagger;
+
+public enum Genre {
+    HipHop,
+    Soul,
+    Rock,
+    Pop,
+    Jazz,
+    Classical,
+    Electronic,
+    RnB,
+    Metal,
+    Indie,
+    Reggae,
+    Country,
+    Blues,
+    Folk,
+    Alternative,
+    Punk,
+    Latin,
+    EDM,
+    Rap,
+    Funk,
+    NONE,
+}

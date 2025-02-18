@@ -2,36 +2,7 @@ package com.example.rockboxtagger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-enum Genre {
-    HipHop,
-    Soul,
-    Rock,
-    Pop,
-    Jazz,
-    Classical,
-    Electronic,
-    RnB,
-    Metal,
-    Indie,
-    Reggae,
-    Country,
-    Blues,
-    Folk,
-    Alternative,
-    Punk,
-    Latin,
-    EDM,
-    Rap,
-    Funk,
-    NONE,
-};
-
-
+import java.util.*;
 
 public record Album(
         long masterID,
@@ -39,15 +10,17 @@ public record Album(
         String artist,
         int year,
         Genre genre,
-        String imageUrl
-)
-{
+        String imageUrl,
+        ArrayList<Song> songs
+) {
+
+    public void addSong(Song s) {
+        songs.add(s);
+    }
+
     @Override
     public String toString() {
-        return "Album{" +
-                "title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
-                '}';
+        return artist + " - " + title;
     }
 
     @Override
@@ -63,38 +36,37 @@ public record Album(
         return Objects.hash(masterID);
     }
 
-    public static Genre getGenre(JsonNode node){
+    public static Genre getGenre(JsonNode node) {
         for (var n : node)
-            return Genre.NONE;
+            if (genreMap.containsKey(n.asText()))
+                return genreMap.get(n.asText());
         return Genre.NONE;
     }
 
-    private static final Map<Genre, String> genreMap;
+    private static final Map<String, Genre> genreMap;
 
     static {
-        Map<Genre, String> tempMap = new HashMap<>();
-        tempMap.put(Genre.HipHop, "HipHop");
-        tempMap.put(Genre.Soul, "Soul");
-        tempMap.put(Genre.Rock, "Rock");
-        tempMap.put(Genre.Pop, "Pop");
-        tempMap.put(Genre.Jazz, "Jazz");
-        tempMap.put(Genre.Classical, "Classical");
-        tempMap.put(Genre.Electronic, "Electronic");
-        tempMap.put(Genre.RnB, "RnB");
-        tempMap.put(Genre.Metal, "Metal");
-        tempMap.put(Genre.Indie, "Indie");
-        tempMap.put(Genre.Reggae, "Reggae");
-        tempMap.put(Genre.Country, "Country");
-        tempMap.put(Genre.Blues, "Blues");
-        tempMap.put(Genre.Folk, "Folk");
-        tempMap.put(Genre.Alternative, "Alternative");
-        tempMap.put(Genre.Punk, "Punk");
-        tempMap.put(Genre.Latin, "Latin");
-        tempMap.put(Genre.EDM, "EDM");
-        tempMap.put(Genre.Rap, "Rap");
-        tempMap.put(Genre.Funk, "Funk");
-        tempMap.put(Genre.NONE, "NONE");
-
-        genreMap = Collections.unmodifiableMap(tempMap);
+        genreMap = Map.ofEntries(
+                Map.entry("Alternative", Genre.Alternative),
+                Map.entry("Electronic", Genre.Electronic),
+                Map.entry("Classical", Genre.Classical),
+                Map.entry("HipHop", Genre.HipHop),
+                Map.entry("Soul", Genre.Soul),
+                Map.entry("Rock", Genre.Rock),
+                Map.entry("Pop", Genre.Pop),
+                Map.entry("Jazz", Genre.Jazz),
+                Map.entry("RnB", Genre.RnB),
+                Map.entry("Metal", Genre.Metal),
+                Map.entry("Indie", Genre.Indie),
+                Map.entry("Reggae", Genre.Reggae),
+                Map.entry("Country", Genre.Country),
+                Map.entry("Blues", Genre.Blues),
+                Map.entry("Folk", Genre.Folk),
+                Map.entry("Punk", Genre.Punk),
+                Map.entry("Latin", Genre.Latin),
+                Map.entry("EDM", Genre.EDM),
+                Map.entry("Rap", Genre.Rap),
+                Map.entry("Funk", Genre.Funk),
+                Map.entry("NONE", Genre.NONE));
     }
 }
