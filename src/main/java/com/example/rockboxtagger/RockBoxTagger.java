@@ -51,8 +51,6 @@ public class RockBoxTagger extends Application {
         Button btn = new Button("Check folder for albums:");
         btn.setOnAction(event -> checkFolderForAlbums());
 
-        Button switchSceneBtn = new Button("Go to Image Gallery");
-        switchSceneBtn.setOnAction(event -> stage.setScene(imageScene));
 
         GridPane root = new GridPane();
         root.setPadding(new Insets(10));
@@ -61,10 +59,9 @@ public class RockBoxTagger extends Application {
 
         GridPane.setConstraints(pathField, 0, 0, 2, 1);
         GridPane.setConstraints(btn, 0, 1, 2, 1);
-        GridPane.setConstraints(switchSceneBtn, 0, 2, 2, 1);
 
         root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(pathField, btn, switchSceneBtn);
+        root.getChildren().addAll(pathField, btn);
 
         mainScene = new Scene(root, 400, 200);
     }
