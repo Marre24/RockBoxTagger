@@ -6,6 +6,7 @@ target/
 ### OWN FOLDERS ###
 
 CoverArt/
+src/main/java/com/example/rockboxtagger/DiscogsConstants.java
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
