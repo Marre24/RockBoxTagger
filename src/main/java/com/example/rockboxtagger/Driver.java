@@ -34,7 +34,7 @@ public class Driver {
     }
 
     public static void reRoll(int i) {
-        activeQuery.reRoll(0);
+        activeQuery.reRoll(i);
     }
 
     public static boolean goNext(){

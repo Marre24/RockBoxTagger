@@ -85,9 +85,9 @@ public class RockBoxTagger extends Application {
         bottomRightIV = new ImageView(new Image(sampleImage));
 
         topLeftIV.setId("0");
-        topRightIV.setId("0");
-        bottomLeftIV.setId("0");
-        bottomRightIV.setId("0");
+        topRightIV.setId("1");
+        bottomLeftIV.setId("2");
+        bottomRightIV.setId("3");
 
         topLeftIV.setFitWidth(150);
         topRightIV.setFitWidth(150);
@@ -109,14 +109,10 @@ public class RockBoxTagger extends Application {
         bottomLeftLabel = new Label("Not available");
         bottomRightLabel = new Label("Not available");
 
-        topLeftLabel.setId("0");
-        topRightLabel.setId("0");
-        bottomLeftLabel.setId("0");
-        bottomRightLabel.setId("0");
-
 
         VBox imageBox0 = new VBox();
         Button button0 = new Button("0");
+        button0.setId("0");
         button0.setText("Refresh");
         button0.setOnAction(RockBoxTagger::refresh);
         imageBox0.setAlignment(Pos.CENTER);
@@ -124,6 +120,7 @@ public class RockBoxTagger extends Application {
 
         VBox imageBox1 = new VBox();
         Button button1 = new Button("1");
+        button1.setId("1");
         button1.setText("Refresh");
         button1.setOnAction(RockBoxTagger::refresh);
         imageBox1.setAlignment(Pos.CENTER);
@@ -131,6 +128,7 @@ public class RockBoxTagger extends Application {
 
         VBox imageBox2 = new VBox();
         Button button2 = new Button("2");
+        button2.setId("2");
         button2.setText("Refresh");
         button2.setOnAction(RockBoxTagger::refresh);
         imageBox2.setAlignment(Pos.CENTER);
@@ -138,6 +136,7 @@ public class RockBoxTagger extends Application {
 
         VBox imageBox3 = new VBox();
         Button button3 = new Button("3");
+        button3.setId("3");
         button3.setText("Refresh");
         button3.setOnAction(RockBoxTagger::refresh);
         imageBox3.setAlignment(Pos.CENTER);
