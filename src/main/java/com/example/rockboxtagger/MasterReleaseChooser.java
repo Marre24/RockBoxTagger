@@ -4,13 +4,13 @@ import javafx.scene.image.Image;
 
 import java.util.LinkedList;
 
-public class Driver {
+public class MasterReleaseChooser {
 
     private static LinkedList<String> albumNames;
 
     private static AlbumQuery activeQuery;
 
-    private static final LinkedList<Album> committedAlbums = new LinkedList<>();
+    private static final LinkedList<MasterRelease> COMMITTED_MASTER_RELEASES = new LinkedList<>();
 
     private static boolean finished = false;
 
@@ -18,8 +18,8 @@ public class Driver {
         return finished;
     }
 
-    public static LinkedList<Album> getCommittedAlbums() {
-        return committedAlbums;
+    public static LinkedList<MasterRelease> getCommittedMasterReleases() {
+        return COMMITTED_MASTER_RELEASES;
     }
 
     public static boolean init(String folderPath) {
@@ -29,7 +29,7 @@ public class Driver {
     }
 
     public static void commit(int i) {
-        committedAlbums.add(activeQuery.commit(i));
+        COMMITTED_MASTER_RELEASES.add(activeQuery.commit(i));
         finished = !goNext();
     }
 
@@ -64,4 +64,5 @@ public class Driver {
         var album = activeQuery.getAlbums()[i];
         return album.artist() + "-" + album.title();
     }
+
 }
