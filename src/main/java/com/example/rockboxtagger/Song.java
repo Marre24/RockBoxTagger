@@ -4,6 +4,7 @@ import org.jaudiotagger.tag.FieldDataInvalidException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +32,7 @@ public record Song(String title, String duration, int trackNumber, List<String> 
         tag.setField(FieldKey.TRACK, Integer.toString(trackNumber));
         tag.setField(FieldKey.YEAR, Integer.toString(album.year()));
         tag.setField(FieldKey.GENRE, album.genre());
-        tag.setField(FieldKey.COVER_ART, album.imageUrl());
+        //tag.setField(FieldKey.COVER_ART, PathBuilder.buildCommitPath(Long.toString(album.masterID())));
     }
 
     @Override
@@ -45,5 +46,12 @@ public record Song(String title, String duration, int trackNumber, List<String> 
     @Override
     public int hashCode() {
         return Objects.hash(title, trackNumber, features);
+    }
+
+    public String getFileName() {
+        String nr = Integer.toString(trackNumber).trim();
+        if (nr.length() == 1)
+            nr = "0" + nr;
+        return nr + " " + title.replaceAll("[\\\\/:*?\"<>|]", "_") + ".mp3";
     }
 }
