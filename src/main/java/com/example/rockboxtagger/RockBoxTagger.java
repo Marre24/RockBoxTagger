@@ -5,10 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -16,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class RockBoxTagger extends Application {
@@ -26,10 +24,13 @@ public class RockBoxTagger extends Application {
     private static Scene mainScene;
     private static Scene masterReleaseChooser;
     private static Scene trackListChooser;
+    private static Scene taggingScene;
     private TextField pathField;
 
     private static final ListView<String> trackLists = new ListView<>();
     private static Label count;
+
+    ProgressBar bar = new ProgressBar();
 
     private static ImageView topLeftIV;
     private static ImageView topRightIV;
@@ -46,10 +47,16 @@ public class RockBoxTagger extends Application {
         createMainScene();
         createMasterReleaseScene();
         createTrackListScene();
+        createTaggingScene();
 
         stage.setTitle("Rockbox Tagger");
         stage.setScene(mainScene);
         stage.show();
+    }
+
+    private void createTaggingScene() {
+        bar.setProgress(0);
+
     }
 
     private void createTrackListScene() {
@@ -76,7 +83,7 @@ public class RockBoxTagger extends Application {
 
         commit.setOnAction(event -> {
             if (!TrackListChooser.commitTrackList())
-                stage.setScene(mainScene);
+                startReTagging(TrackListChooser.getCommittedAlbums());
         });
 
         GridPane.setConstraints(count, 1, 0, 1, 1);
@@ -89,6 +96,20 @@ public class RockBoxTagger extends Application {
         root.getChildren().addAll(next, commit, trackLists, count, previous);
 
         trackListChooser = new Scene(root, 600 , 800);
+    }
+
+    private void startReTagging(ArrayList<Album> committedAlbums) {
+        stage.setScene(taggingScene);
+
+        MP3Tagger tagger = new MP3Tagger(committedAlbums, pathField.getText().trim());
+        tagger.start();
+
+        while (tagger.isAlive()){
+            bar.setProgress(tagger.getProgress());
+        }
+
+
+        stage.setScene(mainScene);
     }
 
     private void createMainScene() {
