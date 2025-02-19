@@ -39,7 +39,7 @@ public class TrackListChooser {
                 current.artist(),
                 current.year(),
                 MasterRelease.genreToString(current.genre()),
-                current.imageUrl(),
+                PathBuilder.buildCommitPath(Long.toString(current.masterID())),
                 current.trackLists().get(trackListCounter)));
 
         if (masterReleases.isEmpty()){
