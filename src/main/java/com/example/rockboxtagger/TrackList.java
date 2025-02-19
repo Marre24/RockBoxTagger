@@ -5,6 +5,13 @@ import java.util.Objects;
 
 public record TrackList(ArrayList<Song> songs) {
 
+    public Song getSongWithTrackNumber(int nr){
+        for (var s : songs)
+            if (s.trackNumber() == nr)
+                return s;
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
