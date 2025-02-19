@@ -2,11 +2,14 @@ package com.example.rockboxtagger;
 
 import javafx.scene.image.Image;
 
+import java.io.File;
 import java.util.LinkedList;
 
 public class MasterReleaseChooser {
 
     private static LinkedList<String> albumNames;
+    private static String currentAlbum;
+    private static String folderDir;
 
     private static AlbumQuery activeQuery;
 
@@ -24,13 +27,36 @@ public class MasterReleaseChooser {
 
     public static boolean init(String folderPath) {
         albumNames = FolderReader.getAlbumNames(folderPath);
+        folderDir = folderPath;
 
         return albumNames != null && !albumNames.isEmpty() && goNext();
     }
 
     public static void commit(int i) {
-        COMMITTED_MASTER_RELEASES.add(activeQuery.commit(i));
+        var mr = activeQuery.commit(i);
+        COMMITTED_MASTER_RELEASES.add(mr);
+        if (!mr.title().equals(currentAlbum))
+            renameFolder(folderDir + "\\" + currentAlbum, mr.title());
+
         finished = !goNext();
+    }
+
+    private static void renameFolder(String from, String to) {
+        File dir = new File(from);
+        File newDir = new File(to);
+
+        if (!dir.isDirectory()) {
+            System.err.println("There is no directory at the given path: " + from);
+        } else if (newDir.exists()) {
+            System.err.println("The target directory name already exists: " + to);
+        } else {
+            boolean success = dir.renameTo(newDir);
+            if (success) {
+                System.out.println("Directory renamed successfully from '" + from + "' to '" + to + "'.");
+            } else {
+                System.err.println("Failed to rename the directory.");
+            }
+        }
     }
 
     public static void reRoll(int i) {
@@ -43,6 +69,7 @@ public class MasterReleaseChooser {
             return false;
         }
 
+        currentAlbum = albumNames.getFirst();
         activeQuery = new AlbumQuery();
         activeQuery.startQuery(albumNames.getFirst());
         albumNames.removeFirst();
