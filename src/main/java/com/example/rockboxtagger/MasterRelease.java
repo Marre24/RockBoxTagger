@@ -37,9 +37,11 @@ public record MasterRelease(
     }
 
     public static Genre getGenre(JsonNode node) {
-        for (var n : node)
-            if (STRING_GENRE_MAP.containsKey(n.asText()))
-                return STRING_GENRE_MAP.get(n.asText());
+        for (var n : node){
+            var text = n.asText().replace("-", "").replace(" ", "").replace("/", "");
+            if (STRING_GENRE_MAP.containsKey(text))
+                return STRING_GENRE_MAP.get(text);
+        }
         return Genre.NONE;
     }
 
