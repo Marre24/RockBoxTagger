@@ -4,6 +4,7 @@ module com.example.demo {
     requires okhttp3;
     requires com.fasterxml.jackson.databind;
     requires jaudiotagger;
+    requires java.desktop;
 
 
     opens com.example.rockboxtagger to javafx.fxml;
