@@ -36,7 +36,7 @@ public class MasterReleaseChooser {
         var mr = activeQuery.commit(i);
         COMMITTED_MASTER_RELEASES.add(mr);
         if (!mr.title().equals(currentAlbum))
-            renameFolder(folderDir + "\\" + currentAlbum, mr.title());
+            renameFolder(folderDir + "\\Albums\\" + currentAlbum + "\\", folderDir + "\\Albums\\" + mr.title() + "\\");
 
         finished = !goNext();
     }
@@ -47,16 +47,20 @@ public class MasterReleaseChooser {
 
         if (!dir.isDirectory()) {
             System.err.println("There is no directory at the given path: " + from);
-        } else if (newDir.exists()) {
-            System.err.println("The target directory name already exists: " + to);
-        } else {
-            boolean success = dir.renameTo(newDir);
-            if (success) {
-                System.out.println("Directory renamed successfully from '" + from + "' to '" + to + "'.");
-            } else {
-                System.err.println("Failed to rename the directory.");
-            }
+            return;
         }
+
+        if (newDir.exists()) {
+            System.err.println("The target directory name already exists: " + to);
+            return;
+        }
+
+        if (!dir.renameTo(newDir)) {
+            System.err.println("Failed to rename the directory.");
+            return;
+        }
+
+        System.out.println("Directory renamed successfully from '" + from + "' to '" + to + "'.");
     }
 
     public static void reRoll(int i) {
