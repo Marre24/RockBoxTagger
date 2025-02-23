@@ -3,6 +3,8 @@ package com.example.rockboxtagger;
 import org.jaudiotagger.tag.FieldDataInvalidException;
 import org.jaudiotagger.tag.Tag;
 
+import java.io.IOException;
+
 public record Album(
         long masterID,
         String title,
@@ -13,7 +15,7 @@ public record Album(
         TrackList trackList
 ) {
 
-    public void writeTagToTrackNr(Tag tag, int trackNr) throws FieldDataInvalidException {
+    public void writeTagToTrackNr(Tag tag, int trackNr) throws FieldDataInvalidException, IOException {
         var track = trackList.getSongWithTrackNumber(trackNr);
         if (track == null) {
             System.err.println("Could not find track with number: " + trackNr + " in : " + this);
